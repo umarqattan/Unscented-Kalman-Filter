@@ -1,8 +1,10 @@
+// Attribute: Udacity Self Driving Car Engineer Nanodegreee Unscented Kalman Filter lesson
+//            coding quizzes (as they provided a ton of guidance as to how to implement
+//            the filter in an efficient, and straight-forward way.
+
 #include "ukf.h"
 #include "Eigen/Dense"
 #include <iostream>
-
-#define EPS 0.001 // Just a small number
 
 using namespace std;
 using Eigen::MatrixXd;
@@ -189,7 +191,7 @@ void UKF::Prediction(double delta_t) {
     Xsig_pred_(4,i) = yawd_p;
   }
 
-  x_ = Xsig_pred_ * weights_; // vectorised sum
+  x_ = Xsig_pred_ * weights_;
   P_.fill(0.0);
   for (int i = 0; i < 2*n_aug_+1; i++) {
     VectorXd x_diff = Xsig_pred_.col(i) - x_;
@@ -285,6 +287,7 @@ void UKF::UpdateUKF(MeasurementPackage meas_package, MatrixXd Zsig, int n_z){
   double NIS = z.transpose() * S.inverse() * z;
   if (meas_package.sensor_type_ == MeasurementPackage::RADAR){
     NIS_radar_ = NIS;
+    
   }
   else if (meas_package.sensor_type_ == MeasurementPackage::LASER){
     NIS_laser_ = NIS;
