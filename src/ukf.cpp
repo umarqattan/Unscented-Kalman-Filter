@@ -234,21 +234,21 @@ void UKF::UpdateLidar(MeasurementPackage meas_package) {
   UpdateUKF(meas_package, Zsig, n_z);
 }
 
-void UKF::UpdateUKF(MeasurementPackage meas_package, MatrixXd Zsig, int n_z){
-  VectorXd z_pred = VectorXd(n_z);
-  z_pred  = Zsig * weights_;
-  MatrixXd S = MatrixXd(n_z, n_z);
+void UKF::UpdateUKF(MeasurementPackage meas_package, MatrixXd Zsig_, int n_z_){
+  VectorXd z_pred = VectorXd(n_z_);
+  z_pred  = Zsig_ * weights_;
+  MatrixXd S = MatrixXd(n_z_, n_z_);
   S.fill(0.0);
   for (int i = 0; i < 2*n_aug_+1; i++) {
 
-    VectorXd z_diff = Zsig.col(i) - z_pred;
+    VectorXd z_diff = Zsig_.col(i) - z_pred;
 
     while(z_diff(1) < -M_PI) z_diff(1) += 2.0*M_PI;
     while(z_diff(1) >  M_PI) z_diff(1) -= 2.0*M_PI;
     S = S + weights_(i) * z_diff * z_diff.transpose();
   }
   
-  MatrixXd R = MatrixXd(n_z, n_z);
+  MatrixXd R = MatrixXd(n_z_, n_z_);
   if (meas_package.sensor_type_ == MeasurementPackage::RADAR){
     R = R_radar_;
   }
@@ -256,11 +256,11 @@ void UKF::UpdateUKF(MeasurementPackage meas_package, MatrixXd Zsig, int n_z){
     R = R_lidar_;
   }
   S = S + R;
-  MatrixXd Tc = MatrixXd(n_x_, n_z);
+  MatrixXd Tc = MatrixXd(n_x_, n_z_);
   
   Tc.fill(0.0);
   for (int i = 0; i < 2*n_aug_+1; i++) {
-    VectorXd z_diff = Zsig.col(i) - z_pred;
+    VectorXd z_diff = Zsig_.col(i) - z_pred;
     if (meas_package.sensor_type_ == MeasurementPackage::RADAR){
       while(z_diff(1) < -M_PI) z_diff(1) += 2.0*M_PI;
       while(z_diff(1) >  M_PI) z_diff(1) -= 2.0*M_PI;

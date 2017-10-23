@@ -94,7 +94,7 @@ public:
    */
   virtual ~UKF();
   
-  void UpdateUKF(MeasurementPackage meas_package, MatrixXd Zsig, int n_z);
+  void UpdateUKF(MeasurementPackage meas_package, MatrixXd Zsig_, int n_z_);
   /**
    * ProcessMeasurement
    * @param meas_package The latest measurement data of either radar or laser
